@@ -122,19 +122,18 @@
       ]
     }
   },
+  "languages": [
+    {
+      "id": "host",
+      "extensions": [".host"],
+      "aliases": ["host"]
+    }
+  ],
   "grammars": [
     {
       "language": "host",
       "scopeName": "source.host",
       "path": "./syntaxes/host.tmLanguage.json"
-    }
-  ],
-  "languages": [
-    {
-      "id": "host",
-      "aliases": ["Host File", "host"],
-      "extensions": [".host"],
-      "configuration": "./language-configuration.json"
     }
   ],
   "scripts": {
