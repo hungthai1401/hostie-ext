@@ -4,6 +4,19 @@
   "description": "Manage system hosts file profiles with ease - create, activate, and switch between host configurations",
   "version": "0.1.0",
   "publisher": "placeholder",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/placeholder/hostie-ext"
+  },
+  "keywords": [
+    "hosts",
+    "hosts file",
+    "dns",
+    "network",
+    "development",
+    "devtools"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },

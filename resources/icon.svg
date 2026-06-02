@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="120" fill="#4A90E2" stroke="#2E5C8A" stroke-width="4"/>
+  
+  <!-- Document/file representation -->
+  <rect x="64" y="72" width="128" height="112" rx="8" fill="#FFFFFF" stroke="#2E5C8A" stroke-width="3"/>
+  
+  <!-- Lines representing text/hosts entries -->
+  <line x1="80" y1="100" x2="176" y2="100" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
+  <line x1="80" y1="120" x2="160" y2="120" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
+  <line x1="80" y1="140" x2="144" y2="140" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Network/connection symbol -->
+  <circle cx="148" cy="148" r="28" fill="#27AE60" stroke="#1E8449" stroke-width="3"/>
+  <path d="M 135 148 L 148 135 L 161 148" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
