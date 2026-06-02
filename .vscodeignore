@@ -1,0 +1,16 @@
+**/*.map
+.vscode-test/
+out/
+node_modules/
+.vscode/
+.git/
+.gitignore
+tsconfig.json
+.eslintrc.json
+.prettierrc.json
+.superpowers/
+docs/
+.beads/
+.spikes/
+*.md
+src/**/*.test.ts
