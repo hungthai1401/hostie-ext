@@ -320,25 +320,29 @@ export class HostsSync {
       case 'darwin':
         return (
           'Permission denied: /etc/hosts requires root access.\n\n' +
-          'Option 1: Grant permissions once:\n' +
+          'Option 1: Grant write permissions (one-time setup):\n' +
           '  sudo chmod 666 /etc/hosts\n' +
-          '  (then activate profile again)\n\n' +
-          'Option 2: Manual sync:\n' +
-          '  Copy content from ~/.host/[profile].host\n' +
-          '  Edit /etc/hosts with: sudo nano /etc/hosts\n\n' +
-          'You can still create and edit profiles without sync.'
+          '  (allows extension to sync automatically)\n\n' +
+          'Option 2: Manual sync each time:\n' +
+          '  1. Open profile: ~/.host/[profile].host\n' +
+          '  2. Copy the hosts entries\n' +
+          '  3. Edit system hosts: sudo nano /etc/hosts\n' +
+          '  4. Paste between # host [profile] start/end delimiters\n\n' +
+          'Profiles remain editable without sync.'
         );
 
       case 'linux':
         return (
           'Permission denied: /etc/hosts requires root access.\n\n' +
-          'Option 1: Grant permissions once:\n' +
+          'Option 1: Grant write permissions (one-time setup):\n' +
           '  sudo chmod 666 /etc/hosts\n' +
-          '  (then activate profile again)\n\n' +
-          'Option 2: Manual sync:\n' +
-          '  Copy content from ~/.host/[profile].host\n' +
-          '  Edit /etc/hosts with: sudo nano /etc/hosts\n\n' +
-          'You can still create and edit profiles without sync.'
+          '  (allows extension to sync automatically)\n\n' +
+          'Option 2: Manual sync each time:\n' +
+          '  1. Open profile: ~/.host/[profile].host\n' +
+          '  2. Copy the hosts entries\n' +
+          '  3. Edit system hosts: sudo nano /etc/hosts\n' +
+          '  4. Paste between # host [profile] start/end delimiters\n\n' +
+          'Profiles remain editable without sync.'
         );
 
       default:
