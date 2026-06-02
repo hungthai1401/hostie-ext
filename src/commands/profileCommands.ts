@@ -153,7 +153,11 @@ export async function activateProfileCommand(
     const profileContents = new Map<string, string>();
     
     for (const name of activeProfiles) {
-      profileContents.set(name, await profileManager.getProfileContent(name));
+      try {
+        profileContents.set(name, await profileManager.getProfileContent(name));
+      } catch (error) {
+        console.warn(`Skipping profile "${name}": ${error}`);
+      }
     }
 
     const syncStatus = await hostsSync.syncToSystem(profileContents);
