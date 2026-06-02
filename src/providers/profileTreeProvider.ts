@@ -28,6 +28,13 @@ export class ProfileTreeItem extends vscode.TreeItem {
 
     // Set description (inline text)
     this.description = profile.isActive ? '✓ Active' : '';
+
+    // Set command to open profile on click (single or double-click)
+    this.command = {
+      command: 'hostie.editProfile',
+      title: 'Edit Profile',
+      arguments: [this],
+    };
   }
 }
 
