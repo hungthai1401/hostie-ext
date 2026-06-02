@@ -268,12 +268,18 @@ export class HostsSync {
     try {
       await writeFilePreservingLineEndings(tempPath, content, lineEnding);
       await fs.rename(tempPath, targetPath);
-    } catch (error) {
+    } catch (error: any) {
       // Clean up temp file on error
       try {
         await fs.unlink(tempPath);
       } catch {
         // Ignore cleanup errors
+      }
+      // Re-throw with target path (not temp path) for clearer error messages
+      if (error.code === 'EACCES' || error.code === 'EPERM') {
+        const permError: any = new Error(`Permission denied writing to ${targetPath}`);
+        permError.code = error.code;
+        throw permError;
       }
       throw error;
     }
