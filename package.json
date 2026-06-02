@@ -23,7 +23,7 @@
   "categories": [
     "Other"
   ],
-  "icon": "resources/icon.png",
+  "icon": "resources/logo.png",
   "main": "./out/extension.js",
   "activationEvents": [],
   "contributes": {
@@ -32,7 +32,7 @@
         {
           "id": "hostie",
           "title": "Hostie",
-          "icon": "resources/icon.png"
+          "icon": "resources/logo.png"
         }
       ]
     },
