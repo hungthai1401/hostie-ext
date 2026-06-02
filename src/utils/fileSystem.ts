@@ -55,13 +55,11 @@ export async function writeFilePreservingLineEndings(
   try {
     await fs.writeFile(filePath, normalizedContent, 'utf8');
   } catch (error: any) {
-    // Provide more helpful error messages
+    // Re-throw with code preserved for upstream permission handling
     if (error.code === 'EACCES' || error.code === 'EPERM') {
-      throw new Error(`Permission denied writing to ${filePath}. ${
-        process.platform === 'win32' 
-          ? 'Run VS Code as administrator.' 
-          : 'Try running with sudo or check file permissions.'
-      }`);
+      const permError: any = new Error(`Permission denied writing to ${filePath}`);
+      permError.code = error.code; // Preserve error code for upstream catch
+      throw permError;
     }
     throw error;
   }
