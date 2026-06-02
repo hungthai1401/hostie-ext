@@ -263,11 +263,16 @@ export class HostsSync {
     content: string,
     lineEnding: '\r\n' | '\n'
   ): Promise<void> {
-    const tempPath = `${targetPath}.tmp`;
+    // Use system temp directory for temp file (writable without root)
+    const tempPath = path.join(os.tmpdir(), 'hostie-hosts.tmp');
 
     try {
+      // Write to temp file in /tmp (always writable)
       await writeFilePreservingLineEndings(tempPath, content, lineEnding);
-      await fs.rename(tempPath, targetPath);
+      // Copy to target (requires target file to be writable)
+      await fs.copyFile(tempPath, targetPath);
+      // Clean up temp file
+      await fs.unlink(tempPath);
     } catch (error: any) {
       // Clean up temp file on error
       try {
