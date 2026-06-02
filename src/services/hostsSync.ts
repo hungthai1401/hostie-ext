@@ -143,7 +143,7 @@ export class HostsSync {
     content: string,
     lineEnding: string
   ): string {
-    const lines = content.split(/\r?\n/);
+    const lines = content.split(lineEnding);
     const result: string[] = [];
     let inManagedSection = false;
 
@@ -177,7 +177,7 @@ export class HostsSync {
     profileName: string,
     lineEnding: string
   ): string {
-    const lines = content.split(/\r?\n/);
+    const lines = content.split(lineEnding);
     const result: string[] = [];
     const startDelimiter = DELIMITER_START(profileName);
     const endDelimiter = DELIMITER_END(profileName);
