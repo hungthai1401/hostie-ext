@@ -1,24 +1,24 @@
 {
   "scopeName": "source.host",
-  "fileTypes":[".host",".host"],
+  "fileTypes": [".host"],
   "patterns": [
     { "include": "#host-comment" },
-    { "include": "#host-ip"},
-    { "include": "#host-domain"}
+    { "include": "#host-ip" },
+    { "include": "#host-domain" }
   ],
   "repository": {
-    "host-comment":{
-      "name": "comment",
+    "host-comment": {
+      "name": "comment.line.number-sign.host",
       "begin": "#",
-      "end": "\\n"
+      "end": "$"
     },
-    "host-ip":{
-      "name": "keyword",
-      "match":"[a-zA-Z]\\w*"
+    "host-ip": {
+      "name": "constant.numeric.ip.host",
+      "match": "\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b"
     },
-    "host-domain":{
-      "name": "keyword",
-      "match":"[a-zA-Z]\\w*"
+    "host-domain": {
+      "name": "string.unquoted.domain.host",
+      "match": "[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}"
     }
   }
 }
