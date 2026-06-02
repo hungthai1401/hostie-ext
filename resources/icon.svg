@@ -1,16 +1,42 @@
 <svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle -->
-  <circle cx="128" cy="128" r="120" fill="#4A90E2" stroke="#2E5C8A" stroke-width="4"/>
+  <!-- Gradient background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="docGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f7fafc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
   
-  <!-- Document/file representation -->
-  <rect x="64" y="72" width="128" height="112" rx="8" fill="#FFFFFF" stroke="#2E5C8A" stroke-width="3"/>
+  <!-- Rounded square background -->
+  <rect width="256" height="256" rx="48" fill="url(#bgGradient)"/>
   
-  <!-- Lines representing text/hosts entries -->
-  <line x1="80" y1="100" x2="176" y2="100" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
-  <line x1="80" y1="120" x2="160" y2="120" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
-  <line x1="80" y1="140" x2="144" y2="140" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"/>
+  <!-- Main document stack (3 layers for multiple profiles) -->
+  <rect x="88" y="68" width="100" height="120" rx="6" fill="#4a5568" opacity="0.3"/>
+  <rect x="82" y="62" width="100" height="120" rx="6" fill="#4a5568" opacity="0.5"/>
+  <rect x="76" y="56" width="100" height="120" rx="6" fill="url(#docGradient)" stroke="#4a5568" stroke-width="2"/>
   
-  <!-- Network/connection symbol -->
-  <circle cx="148" cy="148" r="28" fill="#27AE60" stroke="#1E8449" stroke-width="3"/>
-  <path d="M 135 148 L 148 135 L 161 148" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Hosts file icon - stylized "H" made of connected nodes -->
+  <circle cx="90" cy="90" r="8" fill="#667eea"/>
+  <circle cx="90" cy="140" r="8" fill="#667eea"/>
+  <circle cx="162" cy="90" r="8" fill="#667eea"/>
+  <circle cx="162" cy="140" r="8" fill="#667eea"/>
+  
+  <!-- Connecting lines forming "H" -->
+  <line x1="90" y1="98" x2="90" y2="132" stroke="#667eea" stroke-width="5" stroke-linecap="round"/>
+  <line x1="162" y1="98" x2="162" y2="132" stroke="#667eea" stroke-width="5" stroke-linecap="round"/>
+  <line x1="98" y1="115" x2="154" y2="115" stroke="#667eea" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Toggle/switch indicator (represents activate/deactivate) -->
+  <rect x="100" y="172" width="56" height="24" rx="12" fill="#48bb78" stroke="#38a169" stroke-width="2"/>
+  <circle cx="144" cy="184" r="10" fill="#ffffff"/>
+  
+  <!-- Subtle network dots pattern in background -->
+  <circle cx="40" cy="40" r="3" fill="#ffffff" opacity="0.2"/>
+  <circle cx="216" cy="40" r="3" fill="#ffffff" opacity="0.2"/>
+  <circle cx="40" cy="216" r="3" fill="#ffffff" opacity="0.2"/>
+  <circle cx="216" cy="216" r="3" fill="#ffffff" opacity="0.2"/>
 </svg>
