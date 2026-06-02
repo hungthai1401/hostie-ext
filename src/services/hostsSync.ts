@@ -280,4 +280,62 @@ export class HostsSync {
       throw error;
     }
   }
+
+  /**
+   * Check read and write permissions on system hosts file
+   */
+  async checkPermissions(): Promise<{ canRead: boolean; canWrite: boolean }> {
+    const hostsPath = getSystemHostsPath();
+
+    // Test read permission
+    let canRead = false;
+    try {
+      await fs.access(hostsPath, fs.constants.R_OK);
+      canRead = true;
+    } catch {
+      canRead = false;
+    }
+
+    // Test write permission
+    let canWrite = false;
+    try {
+      await fs.access(hostsPath, fs.constants.W_OK);
+      canWrite = true;
+    } catch {
+      canWrite = false;
+    }
+
+    return { canRead, canWrite };
+  }
+
+  /**
+   * Get platform-specific permission error message
+   */
+  getPermissionErrorMessage(platform: string): string {
+    switch (platform) {
+      case 'win32':
+        return (
+          'Requires administrator access. Restart VS Code as Administrator or manually edit hosts file at ' +
+          'C:\\Windows\\System32\\drivers\\etc\\hosts. You can continue managing profiles without sync.'
+        );
+
+      case 'darwin':
+        return (
+          'Requires root access. Run VS Code with sudo or manually edit /etc/hosts. ' +
+          'You can continue managing profiles without sync.'
+        );
+
+      case 'linux':
+        return (
+          'Requires root access. Run VS Code with sudo or manually edit /etc/hosts. ' +
+          'You can continue managing profiles without sync.'
+        );
+
+      default:
+        return (
+          'Requires elevated permissions to modify system hosts file. ' +
+          'You can continue managing profiles without sync.'
+        );
+    }
+  }
 }
