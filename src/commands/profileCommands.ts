@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import { ProfileManager } from '../services/profileManager';
 import { ProfileTreeProvider, ProfileTreeItem } from '../providers/profileTreeProvider';
+import { HostsSync } from '../services/hostsSync';
+import { getPlatform } from '../utils/platform';
 
 const profileManager = new ProfileManager();
+const hostsSync = new HostsSync();
 
 /**
  * Command handler for creating a new host profile
@@ -128,5 +131,105 @@ export async function deleteProfileCommand(
     // Show error message
     const message = error instanceof Error ? error.message : String(error);
     vscode.window.showErrorMessage(`Failed to delete profile: ${message}`);
+  }
+}
+
+/**
+ * Command handler for activating a host profile
+ */
+export async function activateProfileCommand(
+  item: ProfileTreeItem,
+  treeProvider: ProfileTreeProvider
+): Promise<void> {
+  try {
+    const profileName = item.profile.name;
+
+    // Update meta.json to mark profile as active
+    await profileManager.setProfileActive(profileName, true);
+
+    // Get profile content and sync to system hosts
+    const content = await profileManager.getProfileContent(profileName);
+    const activeProfiles = await profileManager.getActiveProfiles();
+    const profileContents = new Map<string, string>();
+    
+    for (const name of activeProfiles) {
+      profileContents.set(name, await profileManager.getProfileContent(name));
+    }
+
+    const syncStatus = await hostsSync.syncToSystem(profileContents);
+
+    // Always refresh tree view (icon changes even if sync fails)
+    treeProvider.refresh();
+
+    // Handle sync result
+    if (syncStatus.needsPermission) {
+      // Show permission error with platform-specific instructions
+      const platform = getPlatform();
+      const errorMessage = hostsSync.getPermissionErrorMessage(platform);
+      vscode.window.showErrorMessage(
+        `Profile "${profileName}" activated in Hostie, but system hosts sync failed.\n\n${errorMessage}`,
+        { modal: true }
+      );
+    } else if (!syncStatus.success) {
+      // Show other errors
+      vscode.window.showErrorMessage(
+        `Profile "${profileName}" activated, but sync failed: ${syncStatus.error || 'Unknown error'}`
+      );
+    } else {
+      // Success
+      vscode.window.showInformationMessage(`✓ Profile "${profileName}" activated and synced to system hosts`);
+    }
+  } catch (error) {
+    // Show error message
+    const message = error instanceof Error ? error.message : String(error);
+    vscode.window.showErrorMessage(`Failed to activate profile: ${message}`);
+    // Still refresh to show any state changes
+    treeProvider.refresh();
+  }
+}
+
+/**
+ * Command handler for deactivating a host profile
+ */
+export async function deactivateProfileCommand(
+  item: ProfileTreeItem,
+  treeProvider: ProfileTreeProvider
+): Promise<void> {
+  try {
+    const profileName = item.profile.name;
+
+    // Update meta.json to mark profile as inactive
+    await profileManager.setProfileActive(profileName, false);
+
+    // Remove profile section from system hosts
+    const syncStatus = await hostsSync.removeFromSystem(profileName);
+
+    // Always refresh tree view (icon changes even if sync fails)
+    treeProvider.refresh();
+
+    // Handle sync result
+    if (syncStatus.needsPermission) {
+      // Show permission error with platform-specific instructions
+      const platform = getPlatform();
+      const errorMessage = hostsSync.getPermissionErrorMessage(platform);
+      vscode.window.showErrorMessage(
+        `Profile "${profileName}" deactivated in Hostie, but system hosts sync failed.\n\n${errorMessage}`,
+        { modal: true }
+      );
+    } else if (!syncStatus.success) {
+      // Show other errors
+      vscode.window.showErrorMessage(
+        `Profile "${profileName}" deactivated, but sync failed: ${syncStatus.error || 'Unknown error'}`
+      );
+    } else {
+      // Success
+      vscode.window.showInformationMessage(`✓ Profile "${profileName}" deactivated and removed from system hosts`);
+    }
+  } catch (error) {
+    // Show error message
+    const message = error instanceof Error ? error.message : String(error);
+    vscode.window.showErrorMessage(`Failed to deactivate profile: ${message}`);
+    // Still refresh to show any state changes
+    treeProvider.refresh();
   }
 }
