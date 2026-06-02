@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { HostProfile } from '../models/types';
+import { HOSTS_DIR } from '../constants';
 import { ProfileManager } from '../services/profileManager';
 
 /**
@@ -39,6 +40,8 @@ export class ProfileTreeProvider implements vscode.TreeDataProvider<ProfileTreeI
   readonly onDidChangeTreeData: vscode.Event<ProfileTreeItem | undefined | null | void> =
     this._onDidChangeTreeData.event;
 
+  private fileWatchers: vscode.FileSystemWatcher[] = [];
+
   constructor(private profileManager: ProfileManager) {}
 
   /**
@@ -76,5 +79,41 @@ export class ProfileTreeProvider implements vscode.TreeDataProvider<ProfileTreeI
 
     // Flat list - no children
     return [];
+  }
+
+  /**
+   * Initialize file system watchers for auto-refresh
+   * @param context Extension context for subscription management
+   */
+  initializeWatchers(context: vscode.ExtensionContext): void {
+    // Watch for changes to .host files
+    const hostFilesPattern = new vscode.RelativePattern(HOSTS_DIR, '**/*.host');
+    const hostFilesWatcher = vscode.workspace.createFileSystemWatcher(hostFilesPattern);
+
+    hostFilesWatcher.onDidChange(() => this.refresh());
+    hostFilesWatcher.onDidCreate(() => this.refresh());
+    hostFilesWatcher.onDidDelete(() => this.refresh());
+
+    this.fileWatchers.push(hostFilesWatcher);
+    context.subscriptions.push(hostFilesWatcher);
+
+    // Watch for changes to meta.json (tracks active profiles)
+    const metaFilePattern = new vscode.RelativePattern(HOSTS_DIR, 'meta.json');
+    const metaFileWatcher = vscode.workspace.createFileSystemWatcher(metaFilePattern);
+
+    metaFileWatcher.onDidChange(() => this.refresh());
+    metaFileWatcher.onDidCreate(() => this.refresh());
+    metaFileWatcher.onDidDelete(() => this.refresh());
+
+    this.fileWatchers.push(metaFileWatcher);
+    context.subscriptions.push(metaFileWatcher);
+  }
+
+  /**
+   * Dispose of file watchers
+   */
+  dispose(): void {
+    this.fileWatchers.forEach((watcher) => watcher.dispose());
+    this.fileWatchers = [];
   }
 }
