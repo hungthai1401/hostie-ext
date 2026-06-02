@@ -233,3 +233,29 @@ export async function deactivateProfileCommand(
     treeProvider.refresh();
   }
 }
+
+/**
+ * Command handler for editing a host profile
+ */
+export async function editProfileCommand(item: ProfileTreeItem): Promise<void> {
+  try {
+    const profilePath = item.profile.path;
+
+    // Check if file exists
+    const uri = vscode.Uri.file(profilePath);
+    try {
+      await vscode.workspace.fs.stat(uri);
+    } catch {
+      vscode.window.showErrorMessage(`Profile file not found: ${profilePath}`);
+      return;
+    }
+
+    // Open file in editor
+    const document = await vscode.workspace.openTextDocument(uri);
+    await vscode.window.showTextDocument(document);
+  } catch (error) {
+    // Show error message
+    const message = error instanceof Error ? error.message : String(error);
+    vscode.window.showErrorMessage(`Failed to open profile: ${message}`);
+  }
+}
