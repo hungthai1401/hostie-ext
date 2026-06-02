@@ -146,21 +146,19 @@ export class HostsSync {
     const lines = content.split(lineEnding);
     const result: string[] = [];
     let inManagedSection = false;
+    const startPattern = /^# host .+ start$/;
+    const endPattern = /^# host .+ end$/;
 
     for (const line of lines) {
-      // Check if this is a start delimiter
-      if (line.trim().startsWith('# host ') && line.trim().endsWith(' start')) {
+      const trimmed = line.trim();
+      if (startPattern.test(trimmed)) {
         inManagedSection = true;
         continue;
       }
-
-      // Check if this is an end delimiter
-      if (line.trim().startsWith('# host ') && line.trim().endsWith(' end')) {
+      if (endPattern.test(trimmed)) {
         inManagedSection = false;
         continue;
       }
-
-      // Add line if not in managed section
       if (!inManagedSection) {
         result.push(line);
       }
