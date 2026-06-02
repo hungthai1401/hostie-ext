@@ -1,0 +1,127 @@
+{
+  "name": "hostie",
+  "displayName": "Hostie",
+  "description": "Manage system hosts file profiles with ease - create, activate, and switch between host configurations",
+  "version": "0.1.0",
+  "publisher": "placeholder",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "hostie",
+          "title": "Hostie",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "hostie": [
+        {
+          "id": "hostieProfiles",
+          "name": "Host Profiles"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "hostie.createProfile",
+        "title": "Create Profile",
+        "icon": "$(add)"
+      },
+      {
+        "command": "hostie.refreshProfiles",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "hostie.renameProfile",
+        "title": "Rename Profile"
+      },
+      {
+        "command": "hostie.deleteProfile",
+        "title": "Delete Profile",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "hostie.activateProfile",
+        "title": "Activate Profile",
+        "icon": "$(check)"
+      },
+      {
+        "command": "hostie.deactivateProfile",
+        "title": "Deactivate Profile",
+        "icon": "$(circle-outline)"
+      },
+      {
+        "command": "hostie.editProfile",
+        "title": "Edit Profile",
+        "icon": "$(edit)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "hostie.createProfile",
+          "when": "view == hostieProfiles",
+          "group": "navigation@1"
+        },
+        {
+          "command": "hostie.refreshProfiles",
+          "when": "view == hostieProfiles",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "hostie.activateProfile",
+          "when": "view == hostieProfiles && viewItem == inactiveProfile",
+          "group": "inline@1"
+        },
+        {
+          "command": "hostie.deactivateProfile",
+          "when": "view == hostieProfiles && viewItem == activeProfile",
+          "group": "inline@1"
+        },
+        {
+          "command": "hostie.editProfile",
+          "when": "view == hostieProfiles",
+          "group": "navigation@1"
+        },
+        {
+          "command": "hostie.renameProfile",
+          "when": "view == hostieProfiles",
+          "group": "navigation@2"
+        },
+        {
+          "command": "hostie.deleteProfile",
+          "when": "view == hostieProfiles && viewItem == inactiveProfile",
+          "group": "danger@1"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {}
+}
