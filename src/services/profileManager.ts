@@ -173,28 +173,87 @@ export class ProfileManager {
   }
 
   /**
-   * Get list of active profile names from meta.json
+   * Load meta.json data
    */
-  private async getActiveProfiles(): Promise<string[]> {
+  async loadMeta(): Promise<MetaData> {
     try {
       const content = await fs.readFile(META_FILE, 'utf8');
       const meta: MetaData = JSON.parse(content);
-      return meta.cur || [];
+      // Validate structure
+      if (!Array.isArray(meta.cur)) {
+        throw new Error('Invalid meta.json format: cur must be an array');
+      }
+      return meta;
     } catch (error: any) {
       if (error.code === 'ENOENT') {
-        return [];
+        // Return default if file doesn't exist
+        return { cur: [] };
+      }
+      if (error instanceof SyntaxError) {
+        throw new Error('meta.json contains invalid JSON');
       }
       throw error;
     }
   }
 
   /**
+   * Save meta.json data atomically
+   */
+  async saveMeta(meta: MetaData): Promise<void> {
+    await ensureDirectoryExists(HOSTS_DIR);
+    
+    // Atomic write: write to temp file, then rename
+    const tempFile = `${META_FILE}.tmp`;
+    const content = JSON.stringify(meta, null, 2);
+    
+    try {
+      await fs.writeFile(tempFile, content, 'utf8');
+      await fs.rename(tempFile, META_FILE);
+    } catch (error) {
+      // Clean up temp file on error
+      try {
+        await fs.unlink(tempFile);
+      } catch {
+        // Ignore cleanup errors
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Set a profile's active state
+   */
+  async setProfileActive(name: string, active: boolean): Promise<void> {
+    this.validateProfileName(name);
+    
+    const meta = await this.loadMeta();
+    const currentIndex = meta.cur.indexOf(name);
+    
+    if (active && currentIndex === -1) {
+      // Add to active list
+      meta.cur.push(name);
+      await this.saveMeta(meta);
+    } else if (!active && currentIndex !== -1) {
+      // Remove from active list
+      meta.cur.splice(currentIndex, 1);
+      await this.saveMeta(meta);
+    }
+    // If already in desired state, do nothing
+  }
+
+  /**
+   * Get list of active profile names from meta.json
+   */
+  async getActiveProfiles(): Promise<string[]> {
+    const meta = await this.loadMeta();
+    return meta.cur;
+  }
+
+  /**
    * Save active profile names to meta.json
    */
   private async saveActiveProfiles(profiles: string[]): Promise<void> {
-    await ensureDirectoryExists(HOSTS_DIR);
-    const meta: MetaData = { cur: profiles };
-    await fs.writeFile(META_FILE, JSON.stringify(meta, null, 2), 'utf8');
+    await this.saveMeta({ cur: profiles });
   }
 
   /**
