@@ -25,10 +25,3 @@ export const SYSTEM_HOSTS_PATH: Record<string, string> = {
   darwin: '/etc/hosts',
   linux: '/etc/hosts',
 };
-
-/**
- * Get the system hosts file path for the current platform
- */
-export function getSystemHostsPath(): string {
-  return SYSTEM_HOSTS_PATH[os.platform()] || '/etc/hosts';
-}
