@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { HostProfile } from '../models/types';
 import { HOSTS_DIR } from '../constants';
 import { ProfileManager } from '../services/profileManager';
+import { HostsSync } from '../services/hostsSync';
 
 /**
  * TreeItem representing a host profile
@@ -49,7 +50,7 @@ export class ProfileTreeProvider implements vscode.TreeDataProvider<ProfileTreeI
 
   private fileWatchers: vscode.FileSystemWatcher[] = [];
 
-  constructor(private profileManager: ProfileManager) {}
+  constructor(private profileManager: ProfileManager, private hostsSync: HostsSync) {}
 
   /**
    * Refresh the tree view
@@ -97,7 +98,30 @@ export class ProfileTreeProvider implements vscode.TreeDataProvider<ProfileTreeI
     const hostFilesPattern = new vscode.RelativePattern(HOSTS_DIR, '**/*.host');
     const hostFilesWatcher = vscode.workspace.createFileSystemWatcher(hostFilesPattern);
 
-    hostFilesWatcher.onDidChange(() => this.refresh());
+    hostFilesWatcher.onDidChange(async (uri) => {
+      this.refresh();
+      // Auto-sync if the changed file is an active profile
+      const fileName = uri.fsPath.split('/').pop()?.replace('.host', '');
+      if (fileName) {
+        const profiles = await this.profileManager.listProfiles();
+        const changedProfile = profiles.find(p => p.name === fileName);
+        if (changedProfile?.isActive) {
+          // Build map of all active profiles
+          const activeProfiles = await this.profileManager.getActiveProfiles();
+          const profileContents = new Map<string, string>();
+          for (const name of activeProfiles) {
+            try {
+              const content = await this.profileManager.getProfileContent(name);
+              profileContents.set(name, content);
+            } catch (error) {
+              console.warn(`Skipping profile "${name}" during auto-sync: ${error}`);
+            }
+          }
+          // Sync to system hosts
+          await this.hostsSync.syncToSystem(profileContents);
+        }
+      }
+    });
     hostFilesWatcher.onDidCreate(() => this.refresh());
     hostFilesWatcher.onDidDelete(() => this.refresh());
 

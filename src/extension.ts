@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ProfileTreeProvider } from './providers/profileTreeProvider';
 import { ProfileManager } from './services/profileManager';
+import { HostsSync } from './services/hostsSync';
 import {
   createProfileCommand,
   renameProfileCommand,
@@ -14,9 +15,10 @@ import {
  * Extension activation entry point
  */
 export function activate(context: vscode.ExtensionContext) {
-  // Create ProfileManager and TreeView provider
+  // Create ProfileManager, HostsSync, and TreeView provider
   const profileManager = new ProfileManager();
-  const treeProvider = new ProfileTreeProvider(profileManager);
+  const hostsSync = new HostsSync();
+  const treeProvider = new ProfileTreeProvider(profileManager, hostsSync);
 
   // Register TreeView
   const treeView = vscode.window.createTreeView('hostieProfiles', {
