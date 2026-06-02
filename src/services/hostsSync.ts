@@ -319,14 +319,26 @@ export class HostsSync {
 
       case 'darwin':
         return (
-          'Requires root access. Run VS Code with sudo or manually edit /etc/hosts. ' +
-          'You can continue managing profiles without sync.'
+          'Permission denied: /etc/hosts requires root access.\n\n' +
+          'Option 1: Grant permissions once:\n' +
+          '  sudo chmod 666 /etc/hosts\n' +
+          '  (then activate profile again)\n\n' +
+          'Option 2: Manual sync:\n' +
+          '  Copy content from ~/.host/[profile].host\n' +
+          '  Edit /etc/hosts with: sudo nano /etc/hosts\n\n' +
+          'You can still create and edit profiles without sync.'
         );
 
       case 'linux':
         return (
-          'Requires root access. Run VS Code with sudo or manually edit /etc/hosts. ' +
-          'You can continue managing profiles without sync.'
+          'Permission denied: /etc/hosts requires root access.\n\n' +
+          'Option 1: Grant permissions once:\n' +
+          '  sudo chmod 666 /etc/hosts\n' +
+          '  (then activate profile again)\n\n' +
+          'Option 2: Manual sync:\n' +
+          '  Copy content from ~/.host/[profile].host\n' +
+          '  Edit /etc/hosts with: sudo nano /etc/hosts\n\n' +
+          'You can still create and edit profiles without sync.'
         );
 
       default:
