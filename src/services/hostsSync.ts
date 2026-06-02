@@ -73,6 +73,24 @@ export class HostsSync {
         finalContent += profileSections.join(lineEnding);
       }
 
+      // Safety check: never write a completely empty hosts file
+      const hasContent = finalContent.trim().length > 0;
+      if (!hasContent) {
+        // Restore default localhost entries if file would be empty
+        const defaultHosts = [
+          '##',
+          '# Host Database',
+          '#',
+          '# localhost is used to configure the loopback interface',
+          '# when the system is booting.  Do not change this entry.',
+          '##',
+          '127.0.0.1\tlocalhost',
+          '255.255.255.255\tbroadcasthost',
+          '::1             localhost',
+        ].join(lineEnding);
+        finalContent = defaultHosts;
+      }
+
       // Write atomically
       await this.writeAtomic(hostsPath, finalContent, lineEnding);
 
@@ -113,7 +131,25 @@ export class HostsSync {
         lineEnding
       );
 
-      await this.writeAtomic(hostsPath, cleanedContent, lineEnding);
+      // Safety check: never write a completely empty hosts file
+      const hasContent = cleanedContent.trim().length > 0;
+      if (!hasContent) {
+        // Restore default localhost entries if file would be empty
+        const defaultHosts = [
+          '##',
+          '# Host Database',
+          '#',
+          '# localhost is used to configure the loopback interface',
+          '# when the system is booting.  Do not change this entry.',
+          '##',
+          '127.0.0.1\tlocalhost',
+          '255.255.255.255\tbroadcasthost',
+          '::1             localhost',
+        ].join(lineEnding);
+        await this.writeAtomic(hostsPath, defaultHosts, lineEnding);
+      } else {
+        await this.writeAtomic(hostsPath, cleanedContent, lineEnding);
+      }
 
       return {
         success: true,
