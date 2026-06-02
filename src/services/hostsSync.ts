@@ -299,14 +299,17 @@ export class HostsSync {
     content: string,
     lineEnding: '\r\n' | '\n'
   ): Promise<void> {
-    // Use system temp directory for temp file (writable without root)
+    // For system files like /etc/hosts, we can't use copyFile (requires root)
+    // Instead, write directly if target is writable
     const tempPath = path.join(os.tmpdir(), 'hostie-hosts.tmp');
 
     try {
-      // Write to temp file in /tmp (always writable)
+      // Write to temp file first (for verification)
       await writeFilePreservingLineEndings(tempPath, content, lineEnding);
-      // Copy to target (requires target file to be writable)
-      await fs.copyFile(tempPath, targetPath);
+      // Read back the temp file content
+      const tempContent = await fs.readFile(tempPath, 'utf8');
+      // Write directly to target (works if target is 666)
+      await fs.writeFile(targetPath, tempContent, 'utf8');
       // Clean up temp file
       await fs.unlink(tempPath);
     } catch (error: any) {
